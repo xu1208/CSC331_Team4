@@ -1,6 +1,6 @@
 Type, Charge % (in decimal), location (lat and long), Availability (boolean), maintenanceLevel (by percentage), numPassengers
 Sedan, 0.85, 40.7128° N -74.0060° W, True, 80,5
-SUV, 0.72, 34.0522° N -118.2437° W, False, 65,7
+SUV,0.65, 38.8977° N 77.0365° W, True, 65,7
 Truck, 0.60, 39.9526° N -75.1652° W, True, 85,3
 Van, 0.78, 29.7604° N -95.3698° W, True, 95,8
 Sedan, 0.92, 41.8781° N -87.6298° W, False, 75,4
