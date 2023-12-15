@@ -9,18 +9,24 @@ import java.nio.file.Paths;
 import java.util.stream.Collectors;
 
 public class Test {
+    // The Test class is responsible for reading car data from a file and performing various operations
+    // such as finding cars based on certain criteria.
     public static void main(String[] args) throws IOException {
+        // The main method is the entry point of the program.
+        // It handles file input and initializes car data processing.
 
+        //Code for reading in contents of a file into an ArrayList
         FileInputStream inputFileNameStream = null;
         Scanner inputFileNameScanner = null;
 
         inputFileNameStream = new FileInputStream("CarDataFile");
         inputFileNameScanner = new Scanner(inputFileNameStream);
 
-        //skip first line of file
+        //Skip first line of file
         inputFileNameScanner.nextLine();
 
-        ArrayList<Object> workingCars = new ArrayList<Object>();
+        //Three ArrayLists that hold cars in different conditions
+        ArrayList<CarData> workingCars = new ArrayList<CarData>();
         ArrayList<Object> inRepair = new ArrayList<Object>();
         ArrayList<Object> inUse = new ArrayList<Object>();
 
@@ -41,7 +47,7 @@ public class Test {
 
         }
 
-
+        //Output lists regarding different car statuses
         System.out.println("Working Cars");
         int count = 0;
         while (count < workingCars.size()) {
@@ -66,17 +72,43 @@ public class Test {
         }
         System.out.println();
 
-        //TODO:
+        //Examples:
         //Update car charge
         chargeUpdate("CarDataFile", 0.65, 2);
+
         //Update car location
         locationUpdate("CarDataFile", " 38.8977° N 77.0365° W", 2);
+
         //Change usage status
         availabilityUpdate("CarDataFile", " True", 2);
+
         //Give list of cars with x number of seats or more
         List<String> carsWithMinSeats = getSeats("CarDataFile", 7);
         System.out.println("Cars with more than x seats");
         carsWithMinSeats.forEach(System.out::println);
+
+        //Get location and find the nearest car
+        System.out.println();
+        String userInput = " 38.8956° N 77.0355° W";
+        CarData closestCar = findClosestCarByAsciiDifference(workingCars, userInput);
+        System.out.println("Closest Car: " + closestCar);
+
+        //Get list of cars above a certain charge level
+        System.out.println();
+        double chargeThreshold = 0.75; // Replace with desired charge value
+        ArrayList<CarData> carsAboveCharge = getCarsAboveCharge(workingCars, chargeThreshold);
+        System.out.println("Cars above charge " + chargeThreshold + ": " + carsAboveCharge);
+
+        //Get list of certain type of car
+        System.out.println();
+        String carType = "Sedan"; // Replace with desired car type
+        ArrayList<CarData> carsOfType = getCarsOfType(workingCars, carType);
+        int j = 0;
+        while (j < carsOfType.size()) {
+            System.out.println("Cars of type " + carType + ": " + carsOfType.get(j));
+            j++;
+        }
+
 
     }
 
@@ -169,9 +201,54 @@ public class Test {
                 .collect(Collectors.toList());
     }
 
+    //Finds the closest car by ASCII value
+    private static CarData findClosestCarByAsciiDifference(ArrayList<CarData> cars, String userInput) {
+        int userInputAsciiValue = calculateAsciiValue(userInput);
+        CarData closestCar = null;
+        int smallestDifference = Integer.MAX_VALUE;
 
+        for (CarData car : cars) {
+            int carLocationAsciiValue = calculateAsciiValue(car.getLocation());
+            int difference = Math.abs(carLocationAsciiValue - userInputAsciiValue);
 
+            if (difference < smallestDifference) {
+                smallestDifference = difference;
+                closestCar = car;
+            }
+        }
 
+        return closestCar;
+    }
 
+    //Calculates ASCII values
+    private static int calculateAsciiValue(String str) {
+        int total = 0;
+        for (char c : str.toCharArray()) {
+            total += (int) c;
+        }
+        return total;
+    }
+
+    //Get cars above certain charge level
+    private static ArrayList<CarData> getCarsAboveCharge(ArrayList<CarData> cars, double chargeThreshold) {
+        ArrayList<CarData> carsAboveCharge = new ArrayList<>();
+        for (CarData car : cars) {
+            if (car.getCharge() > chargeThreshold) {
+                carsAboveCharge.add(car);
+            }
+        }
+        return carsAboveCharge;
+    }
+
+    //Gets cars of a certain type
+    private static ArrayList<CarData> getCarsOfType(ArrayList<CarData> cars, String carType) {
+        ArrayList<CarData> carsOfType = new ArrayList<>();
+        for (CarData car : cars) {
+            if (car.getType().equalsIgnoreCase(carType)) {
+                carsOfType.add(car);
+            }
+        }
+        return carsOfType;
+    }
 
 }
